@@ -1,0 +1,58 @@
+#!name= 𝗔𝗹𝗹 𝗜𝗻 𝗢𝗻𝗲
+#!desc= 𝗯𝘆 𝗮𝗹𝗲𝗼𝗼
+
+[General]
+force-http-engine-hosts = script.hub, *.script.hub
+
+[Rule]
+AND,((DOMAIN-SUFFIX,googlevideo.com), (PROTOCOL,UDP)),REJECT
+AND,((DOMAIN,youtubei.googleapis.com), (PROTOCOL,UDP)),REJECT
+
+[URL Rewrite]
+^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad - reject-200
+
+[Script]
+FrontEnd = type=http-request, pattern=^https?:\/\/script\.hub\/($|edit\/|reload), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/Script.js, max-size=-1, timeout=300
+
+Override = type=http-request, pattern=^https?:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/Rewrite-Parser.js, max-size=-1, timeout=300
+
+RuleSet = type=http-request, pattern=^https?:\/\/script\.hub\/file\/_start_\/.+type=rule-set, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/rule-parser.js, max-size=-1, timeout=300
+
+Script = type=http-request, pattern=^https?:\/\/script\.hub\/convert\/, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/script-converter.js, max-size=-1, timeout=300
+
+# Youtube
+YoutubeRequest = type=http-request, pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|reel\/reel_watch_sequence|get_watch), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/youtube.request.preview.js, requires-body=true, binary-body-mode=true, max-size=-1
+
+YoutubeResponse = type=http-response, pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/youtube.response.preview.js, requires-body=true, binary-body-mode=true, max-size=-1, argument="{"lyricLang":"vi","captionLang":"vi","blockUpload":true,"blockImmersive":true,"debug":false}"
+
+# Spotify
+SpotifyJson = type=http-request, pattern=^https:\/\/spclient\.wg\.spotify\.com\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/spotify-json.js, max-size=-1, timeout=300
+
+SpotifyProto = type=http-response, pattern=^https:\/\/spclient\.wg\.spotify\.com\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/spotify-proto.js, requires-body=true, binary-body-mode=true, max-size=-1, timeout=300
+
+# Revenue Cat
+RevenueCat = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$), script-path=https://raw.githubusercontent.com/dungnguyen0537/LocketGold_By-DungNguyen/refs/heads/main/DungNguyen1207, requires-body=true, max-size=-1, timeout=300
+
+DeleteHeader = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/deleteHeader.js, max-size=-1, timeout=300
+
+# Nicegram Pro
+Nicegram = type=http-response, pattern=^https?:\/\/nicegram\.cloud\/api\/v\d\/(ai-assistant\/purchase-list|user\/info|telegram\/auth), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/NicegramProCrack.js, requires-body=true, max-size=-1, timeout=300
+
+# Cam Scanner
+CamScanner = type=http-response, pattern=^https:\/\/(api|api-cs)\.intsig\.net\/purchase\/cs\/query_property\?, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/CamscannerProCrack.js, requires-body=true, max-size=-1, timeout=300
+
+# Speed Test Master
+SpeedTestMaster = type=http-response, pattern=^https:\/\/iap\.etm\.tech\/receipts, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/speedtest.js, requires-body=true, max-size=-1, timeout=300
+
+# True Caller
+TrueCaller = type=http-response, pattern=^https://premium-(.+)\.truecaller\.com/v\d/(subscriptions|products\/apple), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/CamscannerProCrack.js, requires-body=true, max-size=-1, timeout=300
+
+# Lightroom
+Lightroom = type=http-response, pattern=^https:\/\/photos\.adobe\.io\/v2\/accounts*, script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/Lightroom.js, requires-body=true, max-size=-1, timeout=300
+
+# Bending Spoon Apps
+BendingSpoonApps = type=http-response, pattern=^https?:\/\/.*\.oracle\.bendingspoonsapps\.com\/v\d\/(users\/.+|purchases\/verify), script-path=https://raw.githubusercontent.com/quocchienn/YouTube_Spotify/refs/heads/module/bending.js, requires-body=true, max-size=-1, timeout=300
+
+
+[MITM]
+hostname = script.hub, *.script.hub, *.googlevideo.com, youtubei.googleapis.com, spclient.wg.spotify.com, api.revenuecat.com, nicegram.cloud, ap*.intsig.net, iap.etm.tech, premium*.truecaller.com, photos.adobe.io, *.oracle.bendingspoonsapps.com
